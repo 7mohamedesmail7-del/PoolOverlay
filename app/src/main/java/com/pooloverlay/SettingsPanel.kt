@@ -38,7 +38,6 @@ class SettingsPanel(
         gearButton = null
     }
 
-    // ---------- زر الترس العائم ----------
     private fun createGearButton() {
         val btn = TextView(context).apply {
             text = "⚙"
@@ -75,7 +74,6 @@ class SettingsPanel(
         }
     }
 
-    // ---------- الـ Panel ----------
     private fun createPanel() {
         val ll = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
@@ -83,13 +81,12 @@ class SettingsPanel(
             setPadding(30, 30, 30, 30)
         }
 
-        // Header + Close
         val header = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             setPadding(0, 0, 0, 20)
         }
         val title = TextView(context).apply {
-            text = "PoolOverlay"
+            text = "PoolOverlay v6"
             setTextColor(Color.parseColor("#FFFC00"))
             textSize = 18f
             layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
@@ -105,15 +102,16 @@ class SettingsPanel(
         header.addView(closeBtn)
         ll.addView(header)
 
-        // Toggles
         ll.addView(toggle("Auto Lengthen", config.autoLengthen) { config.autoLengthen = it })
         ll.addView(toggle("Cushion Shot", config.showBounce) { config.showBounce = it })
         ll.addView(toggle("Show 3 Lines", config.show3Lines) { config.show3Lines = it })
-        ll.addView(toggle("Show Edges", config.showEdges) { config.showEdges = it })
         ll.addView(toggle("Stop Point", config.showStopPoint) { config.showStopPoint = it })
+        ll.addView(toggle("Physics Path", config.showPhysicsPath) { config.showPhysicsPath = it })
+        ll.addView(toggle("Alternatives", config.showAlternatives) { config.showAlternatives = it })
+        ll.addView(toggle("Show Edges", config.showEdges) { config.showEdges = it })
 
         val params = WindowManager.LayoutParams(
-            580,
+            620,
             WindowManager.LayoutParams.WRAP_CONTENT,
             overlayType(),
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
@@ -140,10 +138,7 @@ class SettingsPanel(
             setTextColor(Color.WHITE)
             textSize = 14f
             setPadding(0, 12, 0, 12)
-            setOnCheckedChangeListener { _, v ->
-                onChange(v)
-                callback.onChanged()
-            }
+            setOnCheckedChangeListener { _, v -> onChange(v); callback.onChanged() }
         }
     }
 }
