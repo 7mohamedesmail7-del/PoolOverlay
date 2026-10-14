@@ -21,60 +21,125 @@ class SettingsPanel(
         fun onChanged()
     }
 
-    private var root: View? = null
     private lateinit var wm: WindowManager
+    private var panel: View? = null
+    private var gearButton: View? = null
+    private var panelVisible = false
 
     fun show() {
         wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        createGearButton()
+    }
 
-        val ll = LinearLayout(context).apply {
-            orientation = LinearLayout.VERTICAL
-            setBackgroundColor(Color.parseColor("#E61E1E1E"))
-            setPadding(32, 32, 32, 32)
+    fun hide() {
+        panel?.let { try { wm.removeView(it) } catch (_: Exception) {} }
+        gearButton?.let { try { wm.removeView(it) } catch (_: Exception) {} }
+        panel = null
+        gearButton = null
+    }
+
+    // ---------- زر الترس العائم ----------
+    private fun createGearButton() {
+        val btn = TextView(context).apply {
+            text = "⚙"
+            setTextColor(Color.parseColor("#FFFC00"))
+            textSize = 26f
+            setBackgroundColor(Color.parseColor("#CC000000"))
+            setPadding(28, 28, 28, 28)
+            setOnClickListener { togglePanel() }
         }
-
-        ll.addView(title("PoolOverlay"))
-
-        ll.addView(toggle("Auto Lengthen Guideline", config.autoLengthen) { config.autoLengthen = it })
-        ll.addView(toggle("Cushion Shot Guideline", config.cushionGuideline) { config.cushionGuideline = it })
-        ll.addView(toggle("Show 3 Lines", config.show3Lines) { config.show3Lines = it })
-        ll.addView(toggle("Show Edges of Ball", config.showEdges) { config.showEdges = it })
-
         val params = WindowManager.LayoutParams(
-            720,
             WindowManager.LayoutParams.WRAP_CONTENT,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-            else @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_PHONE,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            overlayType(),
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                     WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
             PixelFormat.TRANSLUCENT
         ).apply {
-            gravity = Gravity.END or Gravity.CENTER_VERTICAL
+            gravity = Gravity.START or Gravity.TOP
+            x = 30
+            y = 220
+        }
+        wm.addView(btn, params)
+        gearButton = btn
+    }
+
+    private fun togglePanel() {
+        if (panelVisible) {
+            panel?.let { try { wm.removeView(it) } catch (_: Exception) {} }
+            panel = null
+            panelVisible = false
+        } else {
+            createPanel()
+            panelVisible = true
+        }
+    }
+
+    // ---------- الـ Panel ----------
+    private fun createPanel() {
+        val ll = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setBackgroundColor(Color.parseColor("#E60F0F0F"))
+            setPadding(30, 30, 30, 30)
+        }
+
+        // Header + Close
+        val header = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            setPadding(0, 0, 0, 20)
+        }
+        val title = TextView(context).apply {
+            text = "PoolOverlay"
+            setTextColor(Color.parseColor("#FFFC00"))
+            textSize = 18f
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+        }
+        val closeBtn = TextView(context).apply {
+            text = "✕"
+            setTextColor(Color.WHITE)
+            textSize = 20f
+            setPadding(20, 0, 20, 0)
+            setOnClickListener { togglePanel() }
+        }
+        header.addView(title)
+        header.addView(closeBtn)
+        ll.addView(header)
+
+        // Toggles
+        ll.addView(toggle("Auto Lengthen", config.autoLengthen) { config.autoLengthen = it })
+        ll.addView(toggle("Cushion Shot", config.showBounce) { config.showBounce = it })
+        ll.addView(toggle("Show 3 Lines", config.show3Lines) { config.show3Lines = it })
+        ll.addView(toggle("Show Edges", config.showEdges) { config.showEdges = it })
+        ll.addView(toggle("Stop Point", config.showStopPoint) { config.showStopPoint = it })
+
+        val params = WindowManager.LayoutParams(
+            580,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            overlayType(),
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+            PixelFormat.TRANSLUCENT
+        ).apply {
+            gravity = Gravity.START or Gravity.CENTER_VERTICAL
+            x = 20
         }
 
         wm.addView(ll, params)
-        root = ll
+        panel = ll
     }
 
-    fun hide() {
-        root?.let { try { wm.removeView(it) } catch (_: Exception) {} }
-        root = null
-    }
-
-    private fun title(t: String) = TextView(context).apply {
-        text = t
-        setTextColor(Color.parseColor("#FFFC00"))
-        textSize = 18f
-        setPadding(0, 0, 0, 24)
-    }
+    private fun overlayType(): Int =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        else @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_PHONE
 
     private fun toggle(label: String, initial: Boolean, onChange: (Boolean) -> Unit): View {
         return Switch(context).apply {
             text = label
             isChecked = initial
             setTextColor(Color.WHITE)
-            setPadding(0, 16, 0, 16)
+            textSize = 14f
+            setPadding(0, 12, 0, 12)
             setOnCheckedChangeListener { _, v ->
                 onChange(v)
                 callback.onChanged()
