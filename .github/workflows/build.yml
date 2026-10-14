@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
 
@@ -17,9 +17,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew || true
 
@@ -27,6 +24,7 @@ jobs:
         run: |
           if [ ! -f ./gradlew ]; then
             gradle wrapper --gradle-version 8.5
+            chmod +x ./gradlew
           fi
           ./gradlew assembleDebug --stacktrace
 
