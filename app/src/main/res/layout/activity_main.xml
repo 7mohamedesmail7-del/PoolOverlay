@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="32dp"
+    android:background="#0E0E0E">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PoolOverlay"
+        android:textColor="#FFFC00"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Free Guidelines for 8 Ball Pool"
+        android:textColor="#AAAAAA"
+        android:textSize="14sp"
+        android:layout_marginBottom="40dp"/>
+
+    <Button
+        android:id="@+id/btnStart"
+        android:layout_width="240dp"
+        android:layout_height="56dp"
+        android:text="▶ تشغيل"
+        android:backgroundTint="#FFFC00"
+        android:textColor="#000"/>
+
+    <Button
+        android:id="@+id/btnStop"
+        android:layout_width="240dp"
+        android:layout_height="56dp"
+        android:text="■ إيقاف"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="#333333"
+        android:textColor="#FFF"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="الاستخدام:\n1. افتح PoolOverlay واضغط تشغيل\n2. اسمح بالـ Overlay + Screen Capture\n3. افتح 8 Ball Pool\n4. الخطوط تظهر تلقائياً"
+        android:textColor="#888888"
+        android:textSize="13sp"/>
+</LinearLayout>
