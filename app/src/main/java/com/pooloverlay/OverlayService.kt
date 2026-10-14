@@ -44,10 +44,12 @@ class OverlayService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val resultCode = intent?.getIntExtra("resultCode", Activity.RESULT_CANCELED) ?: return START_NOT_STICKY
+        val resultCode = intent?.getIntExtra("resultCode", Activity.RESULT_CANCELED)
+            ?: return START_NOT_STICKY
         val data: Intent? = if (Build.VERSION.SDK_INT >= 33)
             intent.getParcelableExtra("data", Intent::class.java)
-        else @Suppress("DEPRECATION") intent.getParcelableExtra("data")
+        else
+            @Suppress("DEPRECATION") intent.getParcelableExtra("data")
         if (data == null) return START_NOT_STICKY
 
         if (projection == null) {
@@ -89,7 +91,7 @@ class OverlayService : Service() {
         val balls = detector.detect(bitmap)
         val table = detector.detectTableBounds(bitmap)
         val aim = engine.computeAim(balls, table)
-        overlayView?.update(balls, aim, table)
+        overlayView?.update(aim)
         bitmap.recycle()
     }
 
@@ -101,7 +103,8 @@ class OverlayService : Service() {
             WindowManager.LayoutParams.MATCH_PARENT,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-            else @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_PHONE,
+            else
+                @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_PHONE,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
@@ -121,8 +124,11 @@ class OverlayService : Service() {
     private fun buildNotification(): Notification {
         val channelId = "pool_overlay"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val ch = NotificationChannel(channelId, "PoolOverlay", NotificationManager.IMPORTANCE_LOW)
-            (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(ch)
+            val ch = NotificationChannel(
+                channelId, "PoolOverlay", NotificationManager.IMPORTANCE_LOW
+            )
+            (getSystemService(NOTIFICATION_SERVICE) as NotificationManager)
+                .createNotificationChannel(ch)
         }
         return NotificationCompat.Builder(this, channelId)
             .setContentTitle("PoolOverlay يعمل")
