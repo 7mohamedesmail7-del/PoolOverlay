@@ -1,0 +1,6 @@
+<resources>
+    <style name="Theme.PoolOverlay" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">#0E0E0E</item>
+        <item name="android:statusBarColor">#0E0E0E</item>
+    </style>
+</resources>
